@@ -5,6 +5,7 @@ import (
 	"time"
 	"fmt"
 	"strconv"
+	"os"
 )
 
 func parseYMD(ymd string, loc *time.Location) time.Time {
@@ -98,6 +99,31 @@ func main() {
 		}
 	}
 
+	// 获取资产负债表
+	stockBalanceSheetList := apiClient.FetchStockBalanceSheetList(stockNo)
+	for k, v := range dataMap {
+		kTime := parseYMD(k, beijing)
+		nearestTime := time.Date(1, time.Month(1), 1, 0, 0, 0, 0, beijing)
+		for _, item := range stockBalanceSheetList.List {
+			if len(item.ReportDate) != 8 {
+				// bad year
+				continue
+			}
+			pTime := parseYMD(item.ReportDate, beijing)
+			if pTime.After(kTime) {
+				continue
+			}
+
+			if pTime.After(nearestTime) {
+				nearestTime = pTime
+				v.totCurrAsset = float64(item.TotCurrAsset)
+				v.totalCurrLiab = float64(item.TotalCurrLiab)
+				v.totalNoncAssets = float64(item.TotalNoncAssets)
+				v.totalNoncLiab = float64 (item.TotalNoncLiab)
+			}
+		}
+	}
+
 	yearList := [...]string{"20111231", "20121231", "20131231", "20141231", "20151231", "20161231", "20171231"}
 
 	// 进行数据计算，得到期望的数据集
@@ -121,10 +147,31 @@ func main() {
 			v.mainBusiProfitGrowRate = (v.mainBusiProfit - lastYearMainBusiProfit) / lastYearMainBusiProfit
 		}
 		lastYearMainBusiProfit = v.mainBusiProfit
+
+		v.currAssetLiabRate = v.totCurrAsset / v.totalCurrLiab
+		v.noncAssetLiabRate = v.totalNoncAssets / v.totalNoncLiab
 	}
 
 	// go map range是无序的
 	for _, year := range yearList {
 		fmt.Printf("@ %v data %+v\n", year, dataMap[year])
 	}
+
+	// write a csv file.
+	f, err := os.Create("./data.csv")
+	if err != nil {
+		fmt.Printf("failed to open data.csv file, can't write csv\n")
+		return
+	}
+	defer f.Close()
+
+	f.WriteString("year,closePrice,sharecount,marketcap,investgainrate,mainbusiincome,mainbusiprofit,mainbusiincomegrowrate,mainbusiprofitgrowrate,totcurrasset,totalcurrliab,currassetliabrate,totalnoncassets,totalnoncliab,nonassetliabrate\n")
+	for _, year := range yearList {
+		d := dataMap[year]
+		f.WriteString(fmt.Sprintf("%v,%v,%v,%v,%v,%v,%v,%v,%v,%v,%v,%v,%v,%v,%v\n",
+			year, d.closePrice, d.shareCount, d.marketCap, d.investGainRate, d.mainBusiIncome, d.mainBusiProfit,
+			d.mainBusiIncomeGrowRate, d.mainBusiProfitGrowRate, d.totCurrAsset, d.totalCurrLiab, d.currAssetLiabRate,
+			d.totalNoncAssets, d.totalNoncLiab, d.noncAssetLiabRate))
+	}
+	f.Sync()
 }

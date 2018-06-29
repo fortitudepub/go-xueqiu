@@ -986,6 +986,161 @@ type StockFinanceInfoList struct {
 	List []StockFinanceInfoItem `json:"list"`
 }
 
+
+/*
+{
+  "list": [
+    {
+      "compcode": "80154375",
+      "publishdate": "20180428",
+      "reportdate": "20180331",
+      "reporttype": "100111",
+      "adjustdate": "20180428",
+      "accstacode": "2",
+      "accstaname": "新会计准则",
+      "curfds": 4993053240.59,
+      "tradfinasset": null,
+      "notesrece": 12831655.39,
+      "accorece": 856188155.45,
+      "prep": 424272220.01,
+      "premrece": null,
+      "interece": 53849079.64,
+      "dividrece": null,
+      "otherrece": 173328742.22,
+      "expotaxrebarece": null,
+      "subsrece": null,
+      "margrece": null,
+      "intelrece": null,
+      "inve": 2296340115.73,
+      "prepexpe": null,
+      "unseg": null,
+      "expinoncurrasset": null,
+      "othercurrasse": 2982150679.54,
+      "currassetitse": null,
+      "currasseform": null,
+      "totcurrasset": 11792013888.57,
+      "lendandloan": null,
+      "avaisellasse": 357046533.7,
+      "holdinvedue": null,
+      "longrece": null,
+      "equiinve": 998254928.29,
+      "otherlonginve": null,
+      "inveprop": 637137615.22,
+      "fixedasseimmo": null,
+      "accudepr": null,
+      "fixedassenetw": null,
+      "fixedasseimpa": null,
+      "fixedassenet": 3949075636.5,
+      "consprog": 1161653302.56,
+      "engimate": null,
+      "fixedasseclea": -39200.0,
+      "prodasse": null,
+      "comasse": null,
+      "hydrasset": null,
+      "intaasset": 1337673594.6,
+      "deveexpe": 4043972.15,
+      "goodwill": 185851614.17,
+      "logprepexpe": 140977878.29,
+      "tradshartrad": null,
+      "defetaxasset": 39620334.76,
+      "othernoncasse": 19992389.0,
+      "noncasseitse": null,
+      "noncasseform": null,
+      "totalnoncassets": 8831288599.24,
+      "totassetitse": null,
+      "totalasseform": null,
+      "totasset": 20623302487.81,
+      "shorttermborr": 182940304.59,
+      "tradfinliab": null,
+      "notespaya": 22119999.93,
+      "accopaya": 3328505374.3,
+      "advapaym": 1615064791.98,
+      "copeworkersal": 166624494.27,
+      "taxespaya": 94045663.43,
+      "intepaya": 1181884.8,
+      "divipaya": 1728939.68,
+      "otherfeepaya": null,
+      "margrequ": null,
+      "intelpay": null,
+      "otherpay": 759101001.71,
+      "accrexpe": null,
+      "expecurrliab": null,
+      "copewithreinrece": null,
+      "inteticksett": null,
+      "dometicksett": null,
+      "defereve": null,
+      "shorttermbdspaya": null,
+      "duenoncliab": 600000.0,
+      "othercurreliabi": 2054053.0,
+      "currliabitse": null,
+      "currliabform": null,
+      "totalcurrliab": 6173966507.69,
+      "longborr": 11980000.0,
+      "bdspaya": null,
+      "longpaya": 9012527.25,
+      "specpaya": 714009605.29,
+      "expenoncliab": 354351.92,
+      "longdefeinco": 376083012.48,
+      "defeincotaxliab": 8305235.14,
+      "othernoncliabi": null,
+      "longliabitse": null,
+      "longliabform": null,
+      "totalnoncliab": 1119744732.08,
+      "totliabitse": null,
+      "totliabform": null,
+      "totliab": 7293711239.77,
+      "paidincapi": 2544900000.0,
+      "capisurp": 2851901831.96,
+      "treastk": null,
+      "specrese": 81585972.78,
+      "rese": 1688389705.93,
+      "generiskrese": null,
+      "unreinveloss": null,
+      "undiprof": 5484857311.74,
+      "topaycashdivi": null,
+      "curtrandiff": null,
+      "sharrighitse": null,
+      "sharrightform": null,
+      "paresharrigh": 12609285680.02,
+      "minysharrigh": 720305568.02,
+      "righaggritse": null,
+      "rightaggrform": null,
+      "righaggr": 13329591248.04,
+      "rightotitse": null,
+      "rightotform": null,
+      "totliabsharequi": 20623302487.81,
+      "settresedepo": null,
+      "plac": null,
+      "derifinaasset": null,
+      "reinrece": null,
+      "reincontrese": null,
+      "purcresaasset": null,
+      "cenbankborr": null,
+      "deposit": null,
+      "fdsborr": null,
+      "deriliab": null,
+      "sellrepasse": null,
+      "copepoun": null,
+      "insucontrese": null,
+      "actitradsecu": null,
+      "actiundesecu": null
+    }
+  ]
+}
+*/
+
+type StockBalanceSheetItem struct {
+	ReportDate string `json:"reportdate"`
+	TotCurrAsset float32 `json:"totcurrasset"`// 流动资产
+	TotalCurrLiab float32 `json:"totalcurrliab"` // 流动负债
+	TotalNoncAssets float32 `json:"totalnoncassets"` // 非流动资产
+	TotalNoncLiab float32 `json:"totalnoncliab"` // 非流动负债
+}
+
+type StockBalanceSheetList struct {
+	List []StockBalanceSheetItem `json:"list"`
+}
+
 // Calculating used types.
 type DetailPerInterval struct {
 	closePrice float64
@@ -996,4 +1151,10 @@ type DetailPerInterval struct {
 	mainBusiProfit float64
 	mainBusiIncomeGrowRate float64
 	mainBusiProfitGrowRate float64
+	totCurrAsset float64
+	totalCurrLiab float64
+	currAssetLiabRate float64
+	totalNoncAssets float64
+	totalNoncLiab float64
+	noncAssetLiabRate float64
 }

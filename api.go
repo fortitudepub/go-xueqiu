@@ -106,3 +106,30 @@ func (apiClient *ApiClient) FetchStockFinanceInfoList(symbol string) *StockFinan
 
 	return &rsp
 }
+
+func (apiClient *ApiClient) FetchStockBalanceSheetList(symbol string) *StockBalanceSheetList {
+	httpReq, err := http.NewRequest("GET",
+		"https://xueqiu.com/stock/f10/balsheet.json?symbol="+symbol,
+		nil)
+	httpReq.Header.Add("Content-type", "Application/json")
+	authCookie := http.Cookie{
+		Name:"xq_a_token",
+		Value:apiClient.authToken,
+	}
+	httpReq.AddCookie(&authCookie)
+	resp, err := apiClient.httpClient.Do(httpReq)
+	if err != nil {
+		fmt.Printf("fetch stock balance sheet data failed, error %v", err)
+		return nil
+	}
+	defer resp.Body.Close()
+
+	var rsp StockBalanceSheetList
+	err = json.NewDecoder(resp.Body).Decode(&rsp)
+	if err != nil  {
+		fmt.Printf("decode stock balance sheet data failed, error %v", err)
+		return nil
+	}
+
+	return &rsp
+}
