@@ -980,6 +980,7 @@ type StockFinanceInfoItem struct {
 	MainBusiProfit float32 `json:"mainbusiprofit"`
 	TotalProfit float32 `json:"totprofit"`
 	NetProfit float32 `json:"netprofit"`
+	BasicEps float32 `json:"basiceps"`
 }
 
 type StockFinanceInfoList struct {
@@ -1147,6 +1148,8 @@ type DetailPerInterval struct {
 	shareCount float64
 	marketCap float64
 	investGainRate float64 // (last last year end market cap value - last year end market cap value) / last last year end market cap value
+	basicEps float64
+	pe float64 // closePrice / basicEps
 	mainBusiIncome float64
 	mainBusiProfit float64
 	mainBusiIncomeGrowRate float64

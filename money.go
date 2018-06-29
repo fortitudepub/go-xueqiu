@@ -95,6 +95,7 @@ func main() {
 				nearestTime = pTime
 				v.mainBusiIncome = float64(item.MainBusiIncome)
 				v.mainBusiProfit = float64(item.MainBusiProfit)
+				v.basicEps = float64(item.BasicEps)
 			}
 		}
 	}
@@ -138,6 +139,8 @@ func main() {
 		}
 		lastYearMarketCap = v.marketCap
 
+		v.pe = v.closePrice / v.basicEps
+
 		if (lastYearMainBusiIncome != 0) {
 			v.mainBusiIncomeGrowRate = (v.mainBusiIncome - lastYearMainBusiIncome) / lastYearMainBusiIncome
 		}
@@ -165,11 +168,11 @@ func main() {
 	}
 	defer f.Close()
 
-	f.WriteString("year,closePrice,sharecount,marketcap,investgainrate,mainbusiincome,mainbusiprofit,mainbusiincomegrowrate,mainbusiprofitgrowrate,totcurrasset,totalcurrliab,currassetliabrate,totalnoncassets,totalnoncliab,nonassetliabrate\n")
+	f.WriteString("year,closePrice,eps,pe,sharecount,marketcap,investgainrate,mainbusiincome,mainbusiprofit,mainbusiincomegrowrate,mainbusiprofitgrowrate,totcurrasset,totalcurrliab,currassetliabrate,totalnoncassets,totalnoncliab,nonassetliabrate\n")
 	for _, year := range yearList {
 		d := dataMap[year]
-		f.WriteString(fmt.Sprintf("%v,%v,%v,%v,%v,%v,%v,%v,%v,%v,%v,%v,%v,%v,%v\n",
-			year, d.closePrice, d.shareCount, d.marketCap, d.investGainRate, d.mainBusiIncome, d.mainBusiProfit,
+		f.WriteString(fmt.Sprintf("%v,%v,%v,%v,%v,%v,%v,%v,%v,%v,%v,%v,%v,%v,%v,%v,%v\n",
+			year, d.closePrice, d.basicEps, d.pe, d.shareCount, d.marketCap, d.investGainRate, d.mainBusiIncome, d.mainBusiProfit,
 			d.mainBusiIncomeGrowRate, d.mainBusiProfitGrowRate, d.totCurrAsset, d.totalCurrLiab, d.currAssetLiabRate,
 			d.totalNoncAssets, d.totalNoncLiab, d.noncAssetLiabRate))
 	}
