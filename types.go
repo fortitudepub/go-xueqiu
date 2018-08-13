@@ -927,7 +927,7 @@ type ShareChgList struct {
 type StockChartListItem struct {
 	Close float32 `json:"close"`
 	Time string `json:"time"`
-	TimeStamp int `json:"timestamp"`
+	TimeStamp int64 `json:"timestamp"`
 }
 
 type StockList struct {
@@ -1160,4 +1160,5 @@ type DetailPerInterval struct {
 	totalNoncAssets float64
 	totalNoncLiab float64
 	noncAssetLiabRate float64
+	netAsset float64
 }

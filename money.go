@@ -25,7 +25,7 @@ func main() {
 	beijing := time.FixedZone("Beijing Time", secondsEastOfUTC)
 
 	apiClient := NewApiClient()
-	apiClient.SetAuthToken("9fe481846a05a6291aada0c2cbdb8529f6013d4d")
+	apiClient.SetAuthToken("d9e3ec88262945adf8a3f5785b49a4634b68769c")
 
 	dataMap := make(map[string]*DetailPerInterval)
 	dataMap["20111231"] = &DetailPerInterval{}
@@ -153,6 +153,8 @@ func main() {
 
 		v.currAssetLiabRate = v.totCurrAsset / v.totalCurrLiab
 		v.noncAssetLiabRate = v.totalNoncAssets / v.totalNoncLiab
+
+		v.netAsset = (v.totCurrAsset - v.totalCurrLiab) + (v.totalNoncAssets - v.totalNoncLiab)
 	}
 
 	// go map range是无序的
@@ -168,11 +170,11 @@ func main() {
 	}
 	defer f.Close()
 
-	f.WriteString("year,closePrice,eps,pe,sharecount,marketcap,investgainrate,mainbusiincome,mainbusiprofit,mainbusiincomegrowrate,mainbusiprofitgrowrate,totcurrasset,totalcurrliab,currassetliabrate,totalnoncassets,totalnoncliab,nonassetliabrate\n")
+	f.WriteString("year,closePrice,eps,pe,sharecount,marketcap,netasset,investgainrate,mainbusiincome,mainbusiprofit,mainbusiincomegrowrate,mainbusiprofitgrowrate,totcurrasset,totalcurrliab,currassetliabrate,totalnoncassets,totalnoncliab,nonassetliabrate\n")
 	for _, year := range yearList {
 		d := dataMap[year]
-		f.WriteString(fmt.Sprintf("%v,%v,%v,%v,%v,%v,%v,%v,%v,%v,%v,%v,%v,%v,%v,%v,%v\n",
-			year, d.closePrice, d.basicEps, d.pe, d.shareCount, d.marketCap, d.investGainRate, d.mainBusiIncome, d.mainBusiProfit,
+		f.WriteString(fmt.Sprintf("%v,%v,%v,%v,%v,%v,%v,%v,%v,%v,%v,%v,%v,%v,%v,%v,%v,%v\n",
+			year, d.closePrice, d.basicEps, d.pe, d.shareCount, d.marketCap, d.netAsset, d.investGainRate, d.mainBusiIncome, d.mainBusiProfit,
 			d.mainBusiIncomeGrowRate, d.mainBusiProfitGrowRate, d.totCurrAsset, d.totalCurrLiab, d.currAssetLiabRate,
 			d.totalNoncAssets, d.totalNoncLiab, d.noncAssetLiabRate))
 	}
