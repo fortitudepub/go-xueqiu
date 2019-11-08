@@ -25,7 +25,7 @@ func main() {
 	beijing := time.FixedZone("Beijing Time", secondsEastOfUTC)
 
 	apiClient := NewApiClient()
-	apiClient.SetAuthToken("d9e3ec88262945adf8a3f5785b49a4634b68769c")
+	apiClient.SetAuthToken("1d5fa7afd45eae4e09ddc0c5f6d54ca93e5e5006")
 
 	dataMap := make(map[string]*DetailPerInterval)
 	dataMap["20111231"] = &DetailPerInterval{}
@@ -35,6 +35,7 @@ func main() {
 	dataMap["20151231"] = &DetailPerInterval{}
 	dataMap["20161231"] = &DetailPerInterval{}
 	dataMap["20171231"] = &DetailPerInterval{}
+	dataMap["20181231"] = &DetailPerInterval{}
 
 	// 从此数据中获取年末时的股本情况
 	list := apiClient.FetchShareChgData(stockNo)
