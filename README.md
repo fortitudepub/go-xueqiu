@@ -41,3 +41,7 @@
 https://xueqiu.com/stock/f10/shareschg.json?symbol=SH601928
 
 需要搞定cookie数据。
+
+# Example
+
+./smartinvest -stock SZ000063
