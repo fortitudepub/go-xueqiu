@@ -874,65 +874,58 @@ type ShareChgList struct {
 }
 
 
+// 20200205：xueqiu update the api, modify using the new api.
+// https://stock.xueqiu.com/v5/stock/chart/kline.json?symbol=SH600036&begin=1580995693485&period=day&type=normal&count=-1&indicator=kline
+// we can omit the indicator, thus get the minimal data.
 /* sample
 {
-  "stock": {
-    "symbol": "SH601928"
+  "data": {
+    "symbol": "SH600036",
+    "column": [
+      "timestamp",
+      "volume",
+      "open",
+      "high",
+      "low",
+      "close",
+      "chg",
+      "percent",
+      "turnoverrate",
+      "amount",
+      "volume_post",
+      "amount_post"
+    ],
+    "item": [
+      [
+        1580832000000,
+        80257198,
+        35.34,
+        35.51,
+        34.83,
+        35.36,
+        0.01,
+        0.03,
+        0.39,
+        2826862599.0,
+        null,
+        null
+      ]
+    ]
   },
-  "success": "true",
-  "chartlist": [
-    {
-      "volume": 257592726,
-      "open": 12.03,
-      "high": 12.97,
-      "close": 11.86,
-      "low": 11.72,
-      "chg": 3.06,
-      "percent": 34.77,
-      "turnrate": 92.01,
-      "ma5": 11.86,
-      "ma10": 11.86,
-      "ma20": 11.86,
-      "ma30": 11.86,
-      "dif": 0.0,
-      "dea": 0.0,
-      "macd": 0.0,
-      "lot_volume": 2575927,
-      "timestamp": 1322582400000,
-      "time": "Wed Nov 30 00:00:00 +0800 2011"
-    },
-    {
-      "volume": 177007681,
-      "open": 12.04,
-      "high": 12.88,
-      "close": 11.69,
-      "low": 11.6,
-      "chg": -0.17,
-      "percent": -1.43,
-      "turnrate": 63.23,
-      "ma5": 11.775,
-      "ma10": 11.775,
-      "ma20": 11.775,
-      "ma30": 11.775,
-      "dif": -0.01,
-      "dea": 0.0,
-      "macd": -0.02,
-      "lot_volume": 1770076,
-      "timestamp": 1322668800000,
-      "time": "Thu Dec 01 00:00:00 +0800 2011"
-    }
-  ]
-} */
+  "error_code": 0,
+  "error_description": ""
+}
+ */
 
-type StockChartListItem struct {
-	Close float32 `json:"close"`
-	Time string `json:"time"`
-	TimeStamp int64 `json:"timestamp"`
+type StockListData struct {
+     Column []string `json:"column"`
+     Item [][]float32 `json:"item"`
 }
 
 type StockList struct {
-	Success string `json:"success"` // "true"/"false" ???
-	Chartlist []StockChartListItem `json:"chartlist"`
+	ErrorCode uint32 `json:"error_code"`
+	ErrorDesc string `json:"error_description"`
+	Data StockListData `json:"data"`
 }
 
 /*

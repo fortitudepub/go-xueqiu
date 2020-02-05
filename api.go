@@ -7,6 +7,11 @@ import (
 //        "bytes"
 )
 
+const (
+        STOCK_LIST_ITEM_DATA_TIMESTAMP_IDX = 0
+        STOCK_LIST_ITEM_DATA_CLOSE_IDX = 5
+)
+
 type ApiClient struct {
 	authToken string
 	httpClient *http.Client
@@ -53,10 +58,12 @@ func (apiClient *ApiClient) FetchShareChgData(symbol string) *ShareChgList {
 }
 
 // 这里是不复权价格，我们用股份数与当时股价计算，要用到不复权价格
-func (apiClient *ApiClient) FetchStockList(symbol string) *StockList {
-	httpReq, err := http.NewRequest("GET",
-		"https://xueqiu.com/stock/forchartk/stocklist.json?symbol="+symbol,
-		nil)
+// 20200205: handle xueqiu api update.
+func (apiClient *ApiClient) FetchStockList(symbol string, now int64) *StockList {
+        // 10 * 365 means 10 years is enough for our analyse.
+        url := fmt.Sprintf("https://stock.xueqiu.com/v5/stock/chart/kline.json?symbol=%s&begin=%v&period=day&type=normal&count=-3650&indicator=kline", symbol, now)
+        fmt.Printf("stocklist url is:"+url+"\n")
+	httpReq, err := http.NewRequest("GET", url, nil)
 	httpReq.Header.Add("Content-type", "Application/json")
 	authCookie := http.Cookie{
 		Name:"xq_a_token",
@@ -65,7 +72,7 @@ func (apiClient *ApiClient) FetchStockList(symbol string) *StockList {
 	httpReq.AddCookie(&authCookie)
 	resp, err := apiClient.httpClient.Do(httpReq)
 	if err != nil {
-		fmt.Printf("fetch share chg data failed, error %v", err)
+		fmt.Printf("fetch stock list data failed, error %v", err)
 		return nil
 	}
 	defer resp.Body.Close()
@@ -73,7 +80,7 @@ func (apiClient *ApiClient) FetchStockList(symbol string) *StockList {
 	var rsp StockList
 	err = json.NewDecoder(resp.Body).Decode(&rsp)
 	if err != nil  {
-		fmt.Printf("decode share chg data failed, error %v", err)
+		fmt.Printf("decode stock list data failed, error %v", err)
 		return nil
 	}
 

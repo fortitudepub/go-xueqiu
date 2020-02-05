@@ -17,6 +17,7 @@ func parseYMD(ymd string, loc *time.Location) time.Time {
 
 func main() {
 	stockPtr := flag.String("stock", "SZ000001", "a stock number in shex/szex")
+	tokenPtr := flag.String("token", "123456", "xueqiu api token")
 	flag.Parse()
 
 	stockNo := *stockPtr
@@ -25,7 +26,7 @@ func main() {
 	beijing := time.FixedZone("Beijing Time", secondsEastOfUTC)
 
 	apiClient := NewApiClient()
-	apiClient.SetAuthToken("1d5fa7afd45eae4e09ddc0c5f6d54ca93e5e5006")
+	apiClient.SetAuthToken(*tokenPtr)
 
 	dataMap := make(map[string]*DetailPerInterval)
 	dataMap["20111231"] = &DetailPerInterval{}
@@ -36,6 +37,7 @@ func main() {
 	dataMap["20161231"] = &DetailPerInterval{}
 	dataMap["20171231"] = &DetailPerInterval{}
 	dataMap["20181231"] = &DetailPerInterval{}
+	dataMap["20191231"] = &DetailPerInterval{}
 
 	// 从此数据中获取年末时的股本情况
 	list := apiClient.FetchShareChgData(stockNo)
@@ -60,19 +62,19 @@ func main() {
 	}
 
 	// 从此数据中获取年末时的股价情况
-	stockList := apiClient.FetchStockList(stockNo)
+	stockList := apiClient.FetchStockList(stockNo, time.Now().UnixNano()/1000000) // in msec.
 	for k, v := range dataMap {
 		kTime := parseYMD(k, beijing)
 		nearestTime := time.Date(1, 1, 1, 0, 0, 0, 0, beijing)
-		for _, item := range stockList.Chartlist {
+		for _, item := range stockList.Data.Item {
 			// conver msec to sec.
-			closeTime := time.Unix(int64(item.TimeStamp/1000), 0).Add(time.Hour*8) // fix utc to beijing time.
+			closeTime := time.Unix(int64(item[STOCK_LIST_ITEM_DATA_TIMESTAMP_IDX]/1000), 0).Add(time.Hour*8) // fix utc to beijing time.
 			if closeTime.After(kTime) {
 				continue
 			}
 			if closeTime.After(nearestTime) {
 				nearestTime = closeTime
-				v.closePrice = float64(item.Close)
+				v.closePrice = float64(item[STOCK_LIST_ITEM_DATA_CLOSE_IDX])
 			}
 		}
 	}
@@ -126,7 +128,7 @@ func main() {
 		}
 	}
 
-	yearList := [...]string{"20111231", "20121231", "20131231", "20141231", "20151231", "20161231", "20171231", "20181231"}
+	yearList := [...]string{"20111231", "20121231", "20131231", "20141231", "20151231", "20161231", "20171231", "20181231", "20191231"}
 
 	// 进行数据计算，得到期望的数据集
 	var lastYearMarketCap float64
@@ -159,9 +161,9 @@ func main() {
 	}
 
 	// go map range是无序的
-	for _, year := range yearList {
-		fmt.Printf("@ %v data %+v\n", year, dataMap[year])
-	}
+	//for _, year := range yearList {
+	//fmt.Printf("@ %v data %+v\n", year, dataMap[year])
+	//}
 
 	// write a csv file.
 	f, err := os.Create("./data.csv")
